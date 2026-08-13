@@ -60,7 +60,7 @@ Port 8998 opened
 
 ### 2. Open RStudio
 
-Open the cloned `iceberg-tutorial` directory as an RStudio project/directory, open [`examples/vpts.R`](examples/vpts.R), and click **Source**. Spark runs on EMR; results return to RStudio. Stop the tunnel with `Ctrl-C` when finished.
+Open [`iceberg-tutorial.Rproj`](iceberg-tutorial.Rproj), open [`examples/vpts.R`](examples/vpts.R), and click **Source**. Spark runs on EMR; results return to RStudio. Stop the tunnel with `Ctrl-C` when finished.
 
 Other examples: [`vpi.R`](examples/vpi.R), [`questions.R`](examples/questions.R), and the archive-wide [`full_scan.R`](examples/full_scan.R). Up to five learners get independent, fairly capped Spark sessions; no AWS ports are public.
 
