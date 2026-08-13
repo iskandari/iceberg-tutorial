@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PROFILE="${AWS_PROFILE:-icebird}"
+PROFILE="${AWS_PROFILE:-icebird-tutorial}"
 REGION="${AWS_REGION:-us-east-1}"
 CLUSTER_ID="${1:-}"
 

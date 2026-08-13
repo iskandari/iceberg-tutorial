@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PROFILE="${AWS_PROFILE:-icebird}"
+PROFILE="${AWS_PROFILE:-icebird-tutorial}"
 REGION="${AWS_REGION:-us-east-1}"
 LIVY_LOCAL_PORT="${LIVY_LOCAL_PORT:-8998}"
 YARN_LOCAL_PORT="${YARN_LOCAL_PORT:-8088}"

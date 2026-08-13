@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PROFILE="${AWS_PROFILE:-icebird}"
+PROFILE="${AWS_PROFILE:-icebird-tutorial}"
 REGION="${AWS_REGION:-us-east-1}"
 EXPECTED_ACCOUNT="863683271215"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -39,4 +39,3 @@ Rscript "$ROOT_DIR/scripts/install-r-packages.R"
 echo
 echo "Setup complete. Connect with:"
 echo "  ./scripts/tunnel-livy.sh"
-

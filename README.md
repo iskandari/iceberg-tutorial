@@ -4,7 +4,7 @@ Shared EMR cluster for querying `glue_catalog.vpts.data`. RStudio is the primary
 
 ## Colleague quick start
 
-The administrator supplies the `icebird` AWS access key and secret separately. Never commit credentials to this repository.
+The administrator supplies the read-only `icebird-tutorial` AWS access key and secret separately. Never commit credentials to this repository. Keep `icebird` for administrators only.
 
 ```bash
 git clone https://github.com/iskandari/iceberg-tutorial.git
@@ -13,7 +13,7 @@ cd iceberg-tutorial
 ./scripts/tunnel-livy.sh
 ```
 
-`setup-local.sh` checks AWS CLI, R, Session Manager, the `icebird` profile, radar-account access, and required R packages. Enter the supplied credentials if `aws configure` prompts.
+`setup-local.sh` checks AWS CLI, R, Session Manager, the `icebird-tutorial` profile, radar-account access, and required R packages. Enter the supplied credentials if `aws configure` prompts.
 
 Keep `tunnel-livy.sh` open. It automatically provides:
 
@@ -51,10 +51,10 @@ git clone https://github.com/iskandari/iceberg-tutorial.git
 cd iceberg-tutorial
 ```
 
-Configure the supplied credentials under the `icebird` profile:
+Configure the supplied credentials under the `icebird-tutorial` profile:
 
 ```bash
-aws configure --profile icebird
+aws configure --profile icebird-tutorial
 ```
 
 Install/check the R clients:
@@ -91,7 +91,7 @@ Other examples: [`vpi.R`](examples/vpi.R), [`questions.R`](examples/questions.R)
 
 [`examples/full_scan.R`](examples/full_scan.R) scans the complete `vpts.vpi` archive to find the 100 m mean-flight-height bands with the highest VID, and reports its own query time. Use it to demonstrate the cost of omitting Iceberg partition filters.
 
-The `icebird` IAM user has the required EMR discovery and SSM tunnel policy. The cluster role—not the laptop—accesses Glue and `s3://ice.bird`.
+The `icebird-tutorial` IAM user has only EMR discovery and SSM tunnel permissions. The dedicated cluster role can read Glue and `s3://ice.bird`, while explicit IAM denies block S3 writes/deletes and Glue mutations.
 
 If a colleague has a different profile name, prefix commands with `AWS_PROFILE=their-profile`. Do not share the `sso-admin` login.
 

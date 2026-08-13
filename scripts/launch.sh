@@ -5,6 +5,7 @@ PROFILE="${AWS_PROFILE:-sso-admin}"
 REGION="${AWS_REGION:-us-east-1}"
 SUBNET_ID="${SUBNET_ID:-subnet-22a44b79}"
 EXPECTED_ACCOUNT="863683271215"
+INSTANCE_PROFILE="${EMR_INSTANCE_PROFILE:-EMR_EC2_VPTS_Tutorial_ReadOnlyRole}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 account="$(aws --profile "$PROFILE" --region "$REGION" sts get-caller-identity --query Account --output text)"
@@ -15,7 +16,7 @@ aws --profile "$PROFILE" --region "$REGION" s3 cp \
   s3://ice.bird/tutorial/bootstrap/install-sparklyr.sh
 
 aws --profile "$PROFILE" --region "$REGION" iam attach-role-policy \
-  --role-name EMR_EC2_DefaultRole \
+  --role-name "$INSTANCE_PROFILE" \
   --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
 
 cluster_id="$(aws --profile "$PROFILE" --region "$REGION" emr create-cluster \
@@ -24,7 +25,7 @@ cluster_id="$(aws --profile "$PROFILE" --region "$REGION" emr create-cluster \
   --applications Name=Hadoop Name=Spark Name=Livy Name=JupyterEnterpriseGateway \
   --bootstrap-actions Name=Install-sparklyr,Path=s3://ice.bird/tutorial/bootstrap/install-sparklyr.sh \
   --service-role EMR_DefaultRole \
-  --ec2-attributes "InstanceProfile=EMR_EC2_DefaultRole,SubnetId=$SUBNET_ID" \
+  --ec2-attributes "InstanceProfile=$INSTANCE_PROFILE,SubnetId=$SUBNET_ID" \
   --instance-groups "file://$ROOT_DIR/config/instance-groups.json" \
   --configurations "file://$ROOT_DIR/config/emr-configurations.json" \
   --tags Project=VPTS-Tutorial Owner=Radar \
