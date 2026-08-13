@@ -1,6 +1,6 @@
 library(parallel)
 
-results <- mclapply(seq_len(5), function(user_number) {
+results <- mclapply(seq_len(10), function(user_number) {
   tryCatch({
     library(sparklyr)
     library(DBI)
@@ -25,8 +25,7 @@ results <- mclapply(seq_len(5), function(user_number) {
   }, error = function(error) {
     sprintf("user %d: ERROR: %s", user_number, conditionMessage(error))
   })
-}, mc.cores = 5)
+}, mc.cores = 10)
 
 print(unlist(results))
 if (any(grepl("ERROR", unlist(results)))) quit(status = 1)
-

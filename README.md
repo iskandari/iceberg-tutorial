@@ -113,7 +113,7 @@ Open [`iceberg-tutorial.Rproj`](iceberg-tutorial.Rproj), open [`examples/vpts.R`
 
 The examples suppress RStudio's unsupported Livy Connections-pane observer. Use the returned R objects and Console output; the Connections pane itself is not available for Livy.
 
-Other examples: [`vpi.R`](examples/vpi.R), [`questions.R`](examples/questions.R), and the archive-wide [`full_scan.R`](examples/full_scan.R). Up to five learners get independent, fairly capped Spark sessions; no AWS ports are public.
+Other examples: [`vpi.R`](examples/vpi.R), [`questions.R`](examples/questions.R), and the archive-wide [`full_scan.R`](examples/full_scan.R). Up to ten learners get independent, fairly capped Spark sessions; no AWS ports are public. Ten simultaneous heavy queries share the cluster, so they may run more slowly than a single query.
 
 [`examples/full_scan.R`](examples/full_scan.R) scans the complete `vpts.vpi` archive to find the 100 m mean-flight-height bands with the highest VID, and reports its own query time. Use it to demonstrate the cost of omitting Iceberg partition filters.
 
