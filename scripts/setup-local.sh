@@ -17,6 +17,7 @@ install_with_brew() {
 }
 
 command -v aws >/dev/null 2>&1 || install_with_brew awscli
+command -v jq >/dev/null 2>&1 || install_with_brew jq
 command -v Rscript >/dev/null 2>&1 || install_with_brew r
 command -v session-manager-plugin >/dev/null 2>&1 || \
   install_with_brew session-manager-plugin --cask

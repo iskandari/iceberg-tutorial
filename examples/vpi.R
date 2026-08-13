@@ -19,6 +19,20 @@ sc <- spark_connect(
 timed_query(sc, "List VPTS tables", "SHOW TABLES IN glue_catalog.vpts")
 timed_query(sc, "Describe VPI", "DESCRIBE glue_catalog.vpts.vpi")
 
+# How many vertically integrated profiles are available per year?
+vpi_by_year <- timed_query(sc, "VPI counts by year", "
+  SELECT year,
+         COUNT(*) AS vpi_count,
+         COUNT(DISTINCT radar) AS radar_count,
+         MIN(datetime) AS first_observation,
+         MAX(datetime) AS last_observation
+  FROM glue_catalog.vpts.vpi
+  GROUP BY year
+  ORDER BY year
+")
+
+print(vpi_by_year)
+
 # Vertically integrated products by radar/week.
 vpi_week <- timed_query(sc, "Weekly VPI summary", "
   SELECT radar, year, week,

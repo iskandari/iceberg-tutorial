@@ -5,6 +5,7 @@ PROFILE="${AWS_PROFILE:-icebird-tutorial}"
 REGION="${AWS_REGION:-us-east-1}"
 LIVY_LOCAL_PORT="${LIVY_LOCAL_PORT:-8998}"
 YARN_LOCAL_PORT="${YARN_LOCAL_PORT:-8088}"
+SPARK_UI_LOCAL_PORT="${SPARK_UI_LOCAL_PORT:-20888}"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CLUSTER_ID="${1:-}"
 
@@ -39,12 +40,21 @@ aws --profile "$PROFILE" --region "$REGION" ssm start-session \
   --parameters "{\"host\":[\"$primary_ip\"],\"portNumber\":[\"8088\"],\"localPortNumber\":[\"$YARN_LOCAL_PORT\"]}" &
 ui_tunnel_pid=$!
 
+echo "Opening Spark ApplicationMaster proxy at http://localhost:$SPARK_UI_LOCAL_PORT"
+aws --profile "$PROFILE" --region "$REGION" ssm start-session \
+  --target "$instance_id" \
+  --document-name AWS-StartPortForwardingSessionToRemoteHost \
+  --parameters "{\"host\":[\"$primary_ip\"],\"portNumber\":[\"20888\"],\"localPortNumber\":[\"$SPARK_UI_LOCAL_PORT\"]}" &
+spark_ui_tunnel_pid=$!
+
 cleanup() {
   kill "$ui_tunnel_pid" 2>/dev/null || true
+  kill "$spark_ui_tunnel_pid" 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM
 
 echo "Opening Livy for RStudio at http://localhost:$LIVY_LOCAL_PORT"
+echo "After connecting, run ./scripts/list-jobs.sh for working Spark UI links."
 aws --profile "$PROFILE" --region "$REGION" ssm start-session \
   --target "$instance_id" \
   --document-name AWS-StartPortForwardingSession \

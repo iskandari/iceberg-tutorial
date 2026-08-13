@@ -19,6 +19,7 @@ Keep `tunnel-livy.sh` open. It automatically provides:
 
 - RStudio/Livy: `http://localhost:8998`
 - Spark/YARN tasks: [http://localhost:8088](http://localhost:8088)
+- Spark ApplicationMaster proxy: `http://localhost:20888`
 
 Open [`iceberg-tutorial.Rproj`](iceberg-tutorial.Rproj), then open [`examples/vpts.R`](examples/vpts.R) and click **Source**.
 
@@ -79,7 +80,13 @@ This single command opens both Livy for RStudio and the Spark/YARN task UI. Leav
 Port 8998 opened
 ```
 
-Visit [http://localhost:8088](http://localhost:8088), select the running Livy application, and open its tracking UI to inspect jobs, stages, executors, and tasks. With Livy/YARN, this replaces direct use of local Spark port 4040. `Ctrl-C` closes both tunnels.
+In a second terminal, print each job's status and working local Spark UI link:
+
+```bash
+./scripts/list-jobs.sh
+```
+
+Open the printed `http://localhost:20888/proxy/application_.../` link. Do not click YARN's **ApplicationMaster** link: it contains a private hostname that laptops cannot resolve. The local link provides Spark's Jobs, Stages, SQL, and Executors tabs. `Ctrl-C` closes all three tunnels.
 
 ### 2. Open RStudio
 

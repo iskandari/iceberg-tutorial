@@ -23,8 +23,8 @@ primary_ip="$(aws --profile "$PROFILE" --region "$REGION" ec2 describe-instances
   --instance-ids "$instance_id" \
   --query 'Reservations[0].Instances[0].PrivateIpAddress' --output text)"
 
-echo "Opening YARN/Spark UI for $CLUSTER_ID at http://localhost:8088"
+echo "Opening Spark ApplicationMaster proxy for $CLUSTER_ID at http://localhost:20888"
 aws --profile "$PROFILE" --region "$REGION" ssm start-session \
   --target "$instance_id" \
   --document-name AWS-StartPortForwardingSessionToRemoteHost \
-  --parameters "{\"host\":[\"$primary_ip\"],\"portNumber\":[\"8088\"],\"localPortNumber\":[\"8088\"]}"
+  --parameters "{\"host\":[\"$primary_ip\"],\"portNumber\":[\"20888\"],\"localPortNumber\":[\"20888\"]}"
