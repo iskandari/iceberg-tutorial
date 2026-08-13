@@ -2,6 +2,26 @@
 
 Shared EMR cluster for querying `glue_catalog.vpts.data`. RStudio is the primary client; Jupyter is optional.
 
+## Colleague quick start
+
+The administrator supplies the `icebird` AWS access key and secret separately. Never commit credentials to this repository.
+
+```bash
+git clone https://github.com/iskandari/iceberg-tutorial.git
+cd iceberg-tutorial
+./scripts/setup-local.sh
+./scripts/tunnel-livy.sh
+```
+
+`setup-local.sh` checks AWS CLI, R, Session Manager, the `icebird` profile, radar-account access, and required R packages. Enter the supplied credentials if `aws configure` prompts.
+
+Keep `tunnel-livy.sh` open. It automatically provides:
+
+- RStudio/Livy: `http://localhost:8998`
+- Spark/YARN tasks: [http://localhost:8088](http://localhost:8088)
+
+Open [`iceberg-tutorial.Rproj`](iceberg-tutorial.Rproj), then open [`examples/vpts.R`](examples/vpts.R) and click **Source**.
+
 ## Launch (admin)
 
 Prerequisites: AWS CLI, `aws sso login --profile sso-admin`, and the Session Manager plugin. On macOS:
@@ -53,11 +73,13 @@ Rscript scripts/install-r-packages.R
 ./scripts/tunnel-livy.sh
 ```
 
-Leave this terminal open. Continue when it says:
+This single command opens both Livy for RStudio and the Spark/YARN task UI. Leave the terminal open. Continue when it says:
 
 ```text
 Port 8998 opened
 ```
+
+Visit [http://localhost:8088](http://localhost:8088), select the running Livy application, and open its tracking UI to inspect jobs, stages, executors, and tasks. With Livy/YARN, this replaces direct use of local Spark port 4040. `Ctrl-C` closes both tunnels.
 
 ### 2. Open RStudio
 
