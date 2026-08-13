@@ -18,9 +18,11 @@ Shape: one `m7i.2xlarge` primary plus four `m7i.4xlarge` workers. The workers pr
 
 Estimated us-east-1 on-demand cost: **about $4.57/hour** ($4.54 EC2 + EMR, plus about $0.04/hour for 320 GiB gp3; S3/network usage extra). A two-hour tutorial is roughly **$9.14**. Because there is no idle shutdown, remember to terminate it manually when finished.
 
-## RStudio: step by step
+## RStudio: connect and work
 
-1. Install the AWS CLI and Session Manager plugin, then clone the repo:
+### One-time setup
+
+Install the tools and clone the repo:
 
 ```bash
 brew install awscli
@@ -29,33 +31,42 @@ git clone https://github.com/iskandari/iceberg-tutorial.git
 cd iceberg-tutorial
 ```
 
-2. In RStudio, install the R clients once:
-
-```r
-install.packages(c("sparklyr", "DBI"))
-```
-
-3. Ask the radar-account administrator for your individual `icebird` profile credentials, then configure them once:
+Configure the supplied credentials under the `icebird` profile:
 
 ```bash
 aws configure --profile icebird
 ```
 
-Then open the tunnel:
+In RStudio, install the R clients:
+
+```r
+install.packages(c("sparklyr", "DBI"))
+```
+
+### 1. Open the port
+
+In a terminal, enter the cloned repo and start the tunnel:
 
 ```bash
+cd iceberg-tutorial
 ./scripts/tunnel-livy.sh
 ```
 
-Leave that terminal open. `Port 8998 opened` means the tunnel is ready. Do not share one access key among colleagues.
+Leave this terminal open. Continue when it says:
 
-4. In RStudio, set the working directory to the cloned repo, open [`examples/vpts.R`](examples/vpts.R), and run it. Stop the tunnel with `Ctrl-C` when finished.
+```text
+Port 8998 opened
+```
+
+### 2. Open RStudio
+
+Open the cloned `iceberg-tutorial` directory as an RStudio project/directory, open [`examples/vpts.R`](examples/vpts.R), and click **Source**. Spark runs on EMR; results return to RStudio. Stop the tunnel with `Ctrl-C` when finished.
 
 Other examples: [`vpi.R`](examples/vpi.R), [`questions.R`](examples/questions.R), and the archive-wide [`full_scan.R`](examples/full_scan.R). Up to five learners get independent, fairly capped Spark sessions; no AWS ports are public.
 
 [`examples/full_scan.R`](examples/full_scan.R) scans the complete `vpts.vpi` archive to find the 100 m mean-flight-height bands with the highest VID, and reports its own query time. Use it to demonstrate the cost of omitting Iceberg partition filters.
 
-An AWS administrator must give each colleague an IAM identity with [`config/colleague-ssm-policy.json`](config/colleague-ssm-policy.json). The cluster role—not the laptop—accesses Glue and `s3://ice.bird`.
+The `icebird` IAM user has the required EMR discovery and SSM tunnel policy. The cluster role—not the laptop—accesses Glue and `s3://ice.bird`.
 
 If a colleague has a different profile name, prefix commands with `AWS_PROFILE=their-profile`. Do not share the `sso-admin` login.
 
