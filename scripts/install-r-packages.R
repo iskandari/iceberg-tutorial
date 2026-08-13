@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-required <- c("sparklyr", "DBI")
+required <- c("sparklyr", "DBI", "ggplot2")
 installed <- rownames(installed.packages())
 missing <- setdiff(required, installed)
 
@@ -17,4 +17,3 @@ if (length(failed)) {
 }
 
 message("R setup complete: ", paste(required, collapse = ", "))
-

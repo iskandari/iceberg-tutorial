@@ -35,3 +35,32 @@ all_vpts <- timed_query(sc, "Archive-wide VID by flight-height band", "
   ORDER BY mean_vid DESC
 ")
 print(all_vpts)
+
+library(ggplot2)
+
+all_vpts$height_band_f <- factor(
+  all_vpts$height_band_m,
+  levels = sort(unique(all_vpts$height_band_m))
+)
+
+ggplot(all_vpts, aes(x = mean_vid, y = height_band_f)) +
+  geom_col(width = 0.8) +
+  scale_x_continuous(
+    limits = c(0, NA),
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+  scale_y_discrete(
+    labels = function(x) {
+      ifelse(as.numeric(as.character(x)) %% 500 == 0, x, "")
+    }
+  ) +
+  labs(
+    x = "Mean VID",
+    y = "Height bin (m)",
+    title = "Mean VID by height"
+  ) +
+  theme_classic(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.ticks.y = element_blank()
+  )
