@@ -36,7 +36,7 @@ aws sso login --profile sso-admin
 ./scripts/tunnel-livy.sh CLUSTER_ID
 ```
 
-Then open [`examples/vpts.R`](examples/vpts.R) in local RStudio and run it. The examples list Iceberg tables, retrieve a filtered sample, and aggregate daily VPTS density and flight speed. Each user gets a separate Livy/Spark session; no AWS ports are public.
+Then open [`examples/vpts.R`](examples/vpts.R) in local RStudio and run it. It lists Iceberg tables, retrieves a filtered profile sample, and aggregates daily density and flight speed. [`examples/vpi.R`](examples/vpi.R) demonstrates the vertically integrated `vpts.vpi` table. Each user gets a separate Livy/Spark session; no AWS ports are public.
 
 Users need radar-account SSO permissions for EMR read access and `ssm:StartSession`. CU VPN may remain connected, but Cornell's split tunnel does not provide an AWS-routable VPN source address.
 
