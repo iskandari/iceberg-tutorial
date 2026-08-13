@@ -1,5 +1,6 @@
 library(sparklyr)
 library(DBI)
+options(rstudio.connectionObserver.errorsSuppressed = TRUE)
 source("examples/helpers.R")
 
 # First run scripts/tunnel-livy.sh in a terminal and leave it open.

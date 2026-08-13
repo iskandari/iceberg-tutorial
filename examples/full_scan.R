@@ -1,5 +1,6 @@
 library(sparklyr)
 library(DBI)
+options(rstudio.connectionObserver.errorsSuppressed = TRUE)
 source("examples/helpers.R")
 
 config <- spark_config()

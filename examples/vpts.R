@@ -1,6 +1,8 @@
 library(sparklyr)
 library(DBI)
+options(rstudio.connectionObserver.errorsSuppressed = TRUE)
 source("examples/helpers.R")
+options(rstudio.connectionObserver.errorsSuppressed = TRUE)
 
 # First run scripts/tunnel-livy.sh in a terminal and leave it open.
 # First time only: install.packages(c("sparklyr", "DBI"))
