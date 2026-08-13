@@ -2,10 +2,15 @@ library(sparklyr)
 library(DBI)
 
 # First run scripts/tunnel-livy.sh in a terminal and leave it open.
+config <- spark_config()
+config[["sparklyr.livy.jar"]] <- "https://raw.githubusercontent.com/sparklyr/sparklyr/main/inst/java/sparklyr-3.5-2.12.jar"
+config[["spark.dynamicAllocation.initialExecutors"]] <- 1
+config[["spark.dynamicAllocation.maxExecutors"]] <- 4
 sc <- spark_connect(
   master = "http://localhost:8998",
   method = "livy",
-  app_name = "vpi-r-tutorial"
+  version = "3.5",
+  config = config
 )
 
 # Discover every Iceberg table in the VPTS database.
@@ -15,9 +20,9 @@ DBI::dbGetQuery(sc, "DESCRIBE glue_catalog.vpts.vpi")
 # Vertically integrated products by radar/week.
 vpi_week <- DBI::dbGetQuery(sc, "
   SELECT radar, year, week,
-         ROUND(AVG(mtr), 2) AS mean_mtr,
-         ROUND(AVG(vid), 2) AS mean_vid,
-         ROUND(AVG(ff), 2) AS mean_speed,
+         ROUND(AVG(CASE WHEN ISNAN(mtr) THEN NULL ELSE mtr END), 2) AS mean_mtr,
+         ROUND(AVG(CASE WHEN ISNAN(vid) THEN NULL ELSE vid END), 2) AS mean_vid,
+         ROUND(AVG(CASE WHEN ISNAN(ff) THEN NULL ELSE ff END), 2) AS mean_speed,
          COUNT(*) AS observations
   FROM glue_catalog.vpts.vpi
   WHERE year = 2024 AND radar IN ('KBUF', 'KTYX')
@@ -28,4 +33,3 @@ vpi_week <- DBI::dbGetQuery(sc, "
 
 head(vpi_week)
 spark_disconnect(sc)
-
