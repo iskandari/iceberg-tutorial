@@ -37,10 +37,10 @@ Configure the supplied credentials under the `icebird` profile:
 aws configure --profile icebird
 ```
 
-In RStudio, install the R clients:
+Install/check the R clients:
 
-```r
-install.packages(c("sparklyr", "DBI"))
+```bash
+Rscript scripts/install-r-packages.R
 ```
 
 ### 1. Open the port
@@ -49,6 +49,7 @@ In a terminal, enter the cloned repo and start the tunnel:
 
 ```bash
 cd iceberg-tutorial
+Rscript scripts/install-r-packages.R
 ./scripts/tunnel-livy.sh
 ```
 
