@@ -14,7 +14,20 @@ Shape: one `m7i.2xlarge` primary plus four `m7i.4xlarge` workers. The workers pr
 
 Estimated us-east-1 on-demand cost: **about $4.57/hour** ($4.54 EC2 + EMR, plus about $0.04/hour for 320 GiB gp3; S3/network usage extra).
 
-## RStudio (each user)
+## Download (each R user)
+
+```bash
+git clone https://github.com/iskandari/iceberg-tutorial.git
+cd iceberg-tutorial
+```
+
+In RStudio, install the two client packages once:
+
+```r
+install.packages(c("sparklyr", "DBI"))
+```
+
+## Connect from RStudio
 
 Keep this authenticated SSM tunnel open:
 
@@ -23,7 +36,7 @@ aws sso login --profile sso-admin
 ./scripts/tunnel-livy.sh CLUSTER_ID
 ```
 
-Then open [`examples/vpts.R`](examples/vpts.R) in local RStudio. Each user gets a separate Livy/Spark session; no AWS ports are public.
+Then open [`examples/vpts.R`](examples/vpts.R) in local RStudio and run it. The examples list Iceberg tables, retrieve a filtered sample, and aggregate daily VPTS density and flight speed. Each user gets a separate Livy/Spark session; no AWS ports are public.
 
 Users need radar-account SSO permissions for EMR read access and `ssm:StartSession`. CU VPN may remain connected, but Cornell's split tunnel does not provide an AWS-routable VPN source address.
 

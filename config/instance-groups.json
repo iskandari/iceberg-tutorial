@@ -1,8 +1,7 @@
 [
   {
     "Name": "Primary",
-    "Market": "ON_DEMAND",
-    "InstanceRole": "MASTER",
+    "InstanceGroupType": "MASTER",
     "InstanceType": "m7i.2xlarge",
     "InstanceCount": 1,
     "EbsConfiguration": {
@@ -13,8 +12,7 @@
   },
   {
     "Name": "Workers",
-    "Market": "ON_DEMAND",
-    "InstanceRole": "CORE",
+    "InstanceGroupType": "CORE",
     "InstanceType": "m7i.4xlarge",
     "InstanceCount": 4,
     "EbsConfiguration": {
@@ -24,4 +22,3 @@
     }
   }
 ]
-
