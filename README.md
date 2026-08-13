@@ -2,6 +2,15 @@
 
 Shared EMR cluster for querying `glue_catalog.vpts.data`. RStudio is the primary client; Jupyter is optional.
 
+## Instructor: get everyone started
+
+1. Start the cluster with `AWS_PROFILE=icebird ./scripts/launch.sh` if it is not already running.
+2. Send users the repo URL and the `icebird-tutorial` read-only credentials through a secure channel.
+3. Ask each user to run the four commands in **Colleague quick start** below.
+4. Users leave `tunnel-livy.sh` running, open `iceberg-tutorial.Rproj` in RStudio, and source `examples/vpts.R`.
+5. Show jobs at [localhost:8088](http://localhost:8088) or run `./scripts/list-jobs.sh` for clickable Spark UI links.
+6. At the end, users press `Ctrl-C` to close their tunnels; an administrator stops the cluster with `./scripts/terminate.sh CLUSTER_ID`.
+
 ## Colleague quick start
 
 The administrator supplies the read-only `icebird-tutorial` AWS access key and secret separately. Never commit credentials to this repository. Keep `icebird` for administrators only.
@@ -22,6 +31,16 @@ Keep `tunnel-livy.sh` open. It automatically provides:
 - Spark ApplicationMaster proxy: `http://localhost:20888`
 
 Open [`iceberg-tutorial.Rproj`](iceberg-tutorial.Rproj), then open [`examples/vpts.R`](examples/vpts.R) and click **Source**.
+
+## Why Iceberg on S3?
+
+- S3 provides inexpensive durable storage without a continuously running database server.
+- Spark compute is started only when needed and can be shared by multiple users.
+- Iceberg adds schema evolution, partition pruning, transactions, and snapshots to files in S3.
+- Hosted PostgreSQL continuously charges for provisioned compute, memory, storage, IOPS, and backups sized for a very large archive.
+- DuckDB is excellent for local analysis; Iceberg is better suited to a large shared dataset with concurrent users and distributed Spark queries.
+
+In short, Iceberg separates inexpensive persistent storage from temporary scalable compute.
 
 ## Existing users after a repo update
 
