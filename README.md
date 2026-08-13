@@ -14,43 +14,54 @@ brew install --cask session-manager-plugin
 ./scripts/launch.sh
 ```
 
-Shape: one `m7i.2xlarge` primary plus four `m7i.4xlarge` workers. The workers provide 64 vCPU and 256 GiB RAM—at least 4× the 64 GiB Mac's memory. The cluster auto-terminates after one idle hour.
+Shape: one `m7i.2xlarge` primary plus four `m7i.4xlarge` workers. The workers provide 64 vCPU and 256 GiB RAM—at least 4× the 64 GiB Mac's memory. The cluster stays up until an administrator runs `scripts/terminate.sh`.
 
-Estimated us-east-1 on-demand cost: **about $4.57/hour** ($4.54 EC2 + EMR, plus about $0.04/hour for 320 GiB gp3; S3/network usage extra). A two-hour tutorial is roughly **$9.14**.
+Estimated us-east-1 on-demand cost: **about $4.57/hour** ($4.54 EC2 + EMR, plus about $0.04/hour for 320 GiB gp3; S3/network usage extra). A two-hour tutorial is roughly **$9.14**. Because there is no idle shutdown, remember to terminate it manually when finished.
 
-## R users: three steps
+## RStudio: step by step
+
+1. Install the AWS CLI and Session Manager plugin, then clone the repo:
 
 ```bash
+brew install awscli
+brew install --cask session-manager-plugin
 git clone https://github.com/iskandari/iceberg-tutorial.git
 cd iceberg-tutorial
 ```
 
-1. Install the clients once:
+2. In RStudio, install the R clients once:
 
 ```r
 install.packages(c("sparklyr", "DBI"))
 ```
 
-2. Keep an authenticated terminal tunnel open:
+3. Ask the radar-account administrator for your individual `icebird` profile credentials, then configure them once:
 
 ```bash
-aws sso login --profile sso-admin
-./scripts/tunnel-livy.sh CLUSTER_ID
+aws configure --profile icebird
 ```
 
-3. In RStudio, open and run [`examples/vpts.R`](examples/vpts.R).
+Then open the tunnel:
+
+```bash
+./scripts/tunnel-livy.sh
+```
+
+Leave that terminal open. `Port 8998 opened` means the tunnel is ready. Do not share one access key among colleagues.
+
+4. In RStudio, set the working directory to the cloned repo, open [`examples/vpts.R`](examples/vpts.R), and run it. Stop the tunnel with `Ctrl-C` when finished.
 
 Other examples: [`vpi.R`](examples/vpi.R), [`questions.R`](examples/questions.R), and the archive-wide [`full_scan.R`](examples/full_scan.R). Up to five learners get independent, fairly capped Spark sessions; no AWS ports are public.
 
 [`examples/full_scan.R`](examples/full_scan.R) scans the complete `vpts.vpi` archive to find the 100 m mean-flight-height bands with the highest VID, and reports its own query time. Use it to demonstrate the cost of omitting Iceberg partition filters.
 
-Users need radar-account SSO permissions for EMR read access and `ssm:StartSession`. CU VPN may remain connected, but Cornell's split tunnel does not provide an AWS-routable VPN source address.
+An AWS administrator must give each colleague an IAM identity with [`config/colleague-ssm-policy.json`](config/colleague-ssm-policy.json). The cluster role—not the laptop—accesses Glue and `s3://ice.bird`.
 
 If a colleague has a different profile name, prefix commands with `AWS_PROFILE=their-profile`. Do not share the `sso-admin` login.
 
 ## Jupyter
 
-Open the existing EMR Studio `Studio_1`, create a Workspace, attach `vpts-iceberg-r-tutorial`, and run [`examples/vpts.py`](examples/vpts.py).
+Open EMR Studio `Studio_1`, create a Workspace, attach `vpts-iceberg-r-tutorial`, upload and run [`examples/vpts_iceberg_tutorial.ipynb`](examples/vpts_iceberg_tutorial.ipynb). It contains the same timed analyses as the R examples, including the full-archive scan. All 11 code cells were tested successfully through PySpark/Livy.
 
 ## Configuration
 

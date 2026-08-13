@@ -1,0 +1,36 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "FindTutorialCluster",
+      "Effect": "Allow",
+      "Action": [
+        "elasticmapreduce:ListClusters",
+        "elasticmapreduce:ListInstances",
+        "elasticmapreduce:DescribeCluster",
+        "ec2:DescribeInstances"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "StartPortForwardingSession",
+      "Effect": "Allow",
+      "Action": "ssm:StartSession",
+      "Resource": [
+        "arn:aws:ec2:us-east-1:863683271215:instance/*",
+        "arn:aws:ssm:us-east-1::document/AWS-StartPortForwardingSession"
+      ]
+    },
+    {
+      "Sid": "ManageOwnSession",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:DescribeSessions",
+        "ssm:GetConnectionStatus",
+        "ssm:ResumeSession",
+        "ssm:TerminateSession"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

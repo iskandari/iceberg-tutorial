@@ -27,7 +27,6 @@ cluster_id="$(aws --profile "$PROFILE" --region "$REGION" emr create-cluster \
   --ec2-attributes "InstanceProfile=EMR_EC2_DefaultRole,SubnetId=$SUBNET_ID" \
   --instance-groups "file://$ROOT_DIR/config/instance-groups.json" \
   --configurations "file://$ROOT_DIR/config/emr-configurations.json" \
-  --auto-termination-policy IdleTimeout=3600 \
   --tags Project=VPTS-Tutorial Owner=Radar \
   --query ClusterId --output text)"
 
