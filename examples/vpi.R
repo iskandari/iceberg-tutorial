@@ -1,5 +1,6 @@
 library(sparklyr)
 library(DBI)
+source("examples/helpers.R")
 
 # First run scripts/tunnel-livy.sh in a terminal and leave it open.
 config <- spark_config()
@@ -14,11 +15,11 @@ sc <- spark_connect(
 )
 
 # Discover every Iceberg table in the VPTS database.
-DBI::dbGetQuery(sc, "SHOW TABLES IN glue_catalog.vpts")
-DBI::dbGetQuery(sc, "DESCRIBE glue_catalog.vpts.vpi")
+timed_query(sc, "List VPTS tables", "SHOW TABLES IN glue_catalog.vpts")
+timed_query(sc, "Describe VPI", "DESCRIBE glue_catalog.vpts.vpi")
 
 # Vertically integrated products by radar/week.
-vpi_week <- DBI::dbGetQuery(sc, "
+vpi_week <- timed_query(sc, "Weekly VPI summary", "
   SELECT radar, year, week,
          ROUND(AVG(CASE WHEN ISNAN(mtr) THEN NULL ELSE mtr END), 2) AS mean_mtr,
          ROUND(AVG(CASE WHEN ISNAN(vid) THEN NULL ELSE vid END), 2) AS mean_vid,

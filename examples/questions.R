@@ -1,5 +1,6 @@
 library(sparklyr)
 library(DBI)
+source("examples/helpers.R")
 
 config <- spark_config()
 config[["sparklyr.livy.jar"]] <- "https://raw.githubusercontent.com/sparklyr/sparklyr/main/inst/java/sparklyr-3.5-2.12.jar"
@@ -13,7 +14,7 @@ sc <- spark_connect(
 )
 
 # 1. Which spring weeks had the most migration traffic?
-busiest_weeks <- DBI::dbGetQuery(sc, "
+busiest_weeks <- timed_query(sc, "Busiest migration weeks", "
   SELECT radar, week,
          ROUND(AVG(CASE WHEN ISNAN(mtr) THEN NULL ELSE mtr END), 2) AS mean_mtr,
          ROUND(MAX(CASE WHEN ISNAN(mtr) THEN NULL ELSE mtr END), 2) AS peak_mtr
@@ -26,7 +27,7 @@ busiest_weeks <- DBI::dbGetQuery(sc, "
 ")
 
 # 2. At what height was bird density concentrated?
-flight_height <- DBI::dbGetQuery(sc, "
+flight_height <- timed_query(sc, "Density-weighted flight height", "
   SELECT radar, CAST(datetime AS DATE) AS date,
          ROUND(SUM(height * dens) / SUM(dens), 0) AS density_weighted_height_m,
          ROUND(MAX(dens), 2) AS peak_density
@@ -39,7 +40,7 @@ flight_height <- DBI::dbGetQuery(sc, "
 ")
 
 # 3. When during the day did migration density peak?
-peak_hours <- DBI::dbGetQuery(sc, "
+peak_hours <- timed_query(sc, "Peak migration hours", "
   SELECT radar, HOUR(datetime) AS utc_hour,
          ROUND(AVG(dens), 2) AS mean_density
   FROM glue_catalog.vpts.data
@@ -50,7 +51,7 @@ peak_hours <- DBI::dbGetQuery(sc, "
 ")
 
 # 4. What was the mean movement vector and speed by radar?
-movement <- DBI::dbGetQuery(sc, "
+movement <- timed_query(sc, "Mean movement vectors", "
   SELECT radar,
          ROUND(AVG(CASE WHEN ISNAN(u) THEN NULL ELSE u END), 2) AS mean_u,
          ROUND(AVG(CASE WHEN ISNAN(v) THEN NULL ELSE v END), 2) AS mean_v,
@@ -61,7 +62,7 @@ movement <- DBI::dbGetQuery(sc, "
 ")
 
 # 5. Are gaps concentrated at particular radars?
-coverage <- DBI::dbGetQuery(sc, "
+coverage <- timed_query(sc, "Radar data gaps", "
   SELECT radar, COUNT(*) AS profiles,
          ROUND(100 * AVG(CASE WHEN gap THEN 1.0 ELSE 0.0 END), 2) AS gap_percent
   FROM glue_catalog.vpts.data

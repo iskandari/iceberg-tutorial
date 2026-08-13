@@ -1,5 +1,6 @@
 library(sparklyr)
 library(DBI)
+source("examples/helpers.R")
 
 # First run scripts/tunnel-livy.sh in a terminal and leave it open.
 # First time only: install.packages(c("sparklyr", "DBI"))
@@ -14,9 +15,9 @@ sc <- spark_connect(
   config = config
 )
 
-DBI::dbGetQuery(sc, "SHOW TABLES IN glue_catalog.vpts")
+timed_query(sc, "List VPTS tables", "SHOW TABLES IN glue_catalog.vpts")
 
-sample <- DBI::dbGetQuery(sc, "
+sample <- timed_query(sc, "Filtered profile sample", "
   SELECT radar, datetime, height, dens, ff, dd
   FROM glue_catalog.vpts.data
   WHERE year = 2024 AND month = 5 AND rad = 'KBUF'
@@ -27,7 +28,7 @@ sample <- DBI::dbGetQuery(sc, "
 head(sample)
 
 # A small aggregation stays in Spark; only the result returns to RStudio.
-nightly_profiles <- DBI::dbGetQuery(sc, "
+nightly_profiles <- timed_query(sc, "Daily profile summary", "
   SELECT radar, CAST(datetime AS DATE) AS date,
          ROUND(AVG(dens), 2) AS mean_density,
          ROUND(AVG(CASE WHEN ISNAN(ff) THEN NULL ELSE ff END), 2) AS mean_speed,

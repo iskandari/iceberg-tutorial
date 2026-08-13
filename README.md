@@ -18,29 +18,31 @@ Shape: one `m7i.2xlarge` primary plus four `m7i.4xlarge` workers. The workers pr
 
 Estimated us-east-1 on-demand cost: **about $4.57/hour** ($4.54 EC2 + EMR, plus about $0.04/hour for 320 GiB gp3; S3/network usage extra). A two-hour tutorial is roughly **$9.14**.
 
-## Download (each R user)
+## R users: three steps
 
 ```bash
 git clone https://github.com/iskandari/iceberg-tutorial.git
 cd iceberg-tutorial
 ```
 
-In RStudio, install the two client packages once:
+1. Install the clients once:
 
 ```r
 install.packages(c("sparklyr", "DBI"))
 ```
 
-## Connect from RStudio
-
-Keep this authenticated SSM tunnel open:
+2. Keep an authenticated terminal tunnel open:
 
 ```bash
 aws sso login --profile sso-admin
 ./scripts/tunnel-livy.sh CLUSTER_ID
 ```
 
-Then open [`examples/vpts.R`](examples/vpts.R) in local RStudio and run it. It lists Iceberg tables, retrieves a filtered profile sample, and aggregates daily density and flight speed. [`examples/vpi.R`](examples/vpi.R) demonstrates the vertically integrated `vpts.vpi` table. [`examples/questions.R`](examples/questions.R) asks five migration and data-quality questions. Up to five learners get separate, fairly capped Livy/Spark sessions; no AWS ports are public.
+3. In RStudio, open and run [`examples/vpts.R`](examples/vpts.R).
+
+Other examples: [`vpi.R`](examples/vpi.R), [`questions.R`](examples/questions.R), and the archive-wide [`full_scan.R`](examples/full_scan.R). Up to five learners get independent, fairly capped Spark sessions; no AWS ports are public.
+
+[`examples/full_scan.R`](examples/full_scan.R) scans the complete `vpts.vpi` archive to find the 100 m mean-flight-height bands with the highest VID, and reports its own query time. Use it to demonstrate the cost of omitting Iceberg partition filters.
 
 Users need radar-account SSO permissions for EMR read access and `ssm:StartSession`. CU VPN may remain connected, but Cornell's split tunnel does not provide an AWS-routable VPN source address.
 
@@ -58,7 +60,16 @@ Credentials come from IAM roles—never put access keys in notebooks.
 
 ## Verified
 
-Tested live against EMR on 2026-08-13: all three R scripts passed. A five-user concurrent smoke test passed in 44 seconds. Fresh sessions plus example queries took 42–60 seconds; later queries in an open session avoid startup overhead.
+Tested live on 2026-08-13. Five simultaneous R sessions all queried Iceberg successfully in 42.4 seconds.
+
+| Script | SQL time(s) | Total with new session |
+|---|---:|---:|
+| `vpts.R` | 6.1, 10.7, 5.7 | 45.1 s |
+| `vpi.R` | 5.8, 2.0, 20.1 | 50.3 s |
+| `questions.R` | 24.7, 6.1, 5.6, 2.5, 3.5 | 62.5 s |
+| `full_scan.R` | 125.2 | 149.0 s |
+
+The archive-wide result placed the highest mean VID in the 900 m height band. Timings vary with concurrent load and cached metadata.
 
 ## Stop
 
