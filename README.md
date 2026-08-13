@@ -23,6 +23,25 @@ Keep `tunnel-livy.sh` open. It automatically provides:
 
 Open [`iceberg-tutorial.Rproj`](iceberg-tutorial.Rproj), then open [`examples/vpts.R`](examples/vpts.R) and click **Source**.
 
+## Existing users after a repo update
+
+You do not need to reinstall everything. Update the repo, stop the old tunnel with `Ctrl-C`, and restart it:
+
+```bash
+cd iceberg-tutorial
+git pull
+./scripts/tunnel-livy.sh
+```
+
+Keep that terminal open. In another terminal, list current jobs and working Spark UI links:
+
+```bash
+cd iceberg-tutorial
+./scripts/list-jobs.sh
+```
+
+RStudio uses `localhost:8998`, YARN uses [localhost:8088](http://localhost:8088), and `list-jobs.sh` prints each application's accessible `localhost:20888` Spark UI link. Rerun `./scripts/setup-local.sh` only if local tools or R packages are missing.
+
 ## Launch (admin)
 
 Prerequisites: AWS CLI, `aws sso login --profile sso-admin`, and the Session Manager plugin. On macOS:
