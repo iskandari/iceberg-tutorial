@@ -1,0 +1,27 @@
+[
+  {
+    "Name": "Primary",
+    "Market": "ON_DEMAND",
+    "InstanceRole": "MASTER",
+    "InstanceType": "m7i.2xlarge",
+    "InstanceCount": 1,
+    "EbsConfiguration": {
+      "EbsBlockDeviceConfigs": [
+        {"VolumeSpecification": {"VolumeType": "gp3", "SizeInGB": 64}, "VolumesPerInstance": 1}
+      ]
+    }
+  },
+  {
+    "Name": "Workers",
+    "Market": "ON_DEMAND",
+    "InstanceRole": "CORE",
+    "InstanceType": "m7i.4xlarge",
+    "InstanceCount": 4,
+    "EbsConfiguration": {
+      "EbsBlockDeviceConfigs": [
+        {"VolumeSpecification": {"VolumeType": "gp3", "SizeInGB": 64}, "VolumesPerInstance": 1}
+      ]
+    }
+  }
+]
+
