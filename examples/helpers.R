@@ -1,3 +1,5 @@
+options(rstudio.connectionObserver.errorsSuppressed = TRUE)
+
 timed_query <- function(sc, label, sql) {
   started <- Sys.time()
   result <- DBI::dbGetQuery(sc, sql)
@@ -5,4 +7,3 @@ timed_query <- function(sc, label, sql) {
   message(sprintf("TIMING | %s | %.2f seconds", label, seconds))
   result
 }
-
