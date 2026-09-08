@@ -144,6 +144,28 @@ If a colleague has a different profile name, prefix commands with `AWS_PROFILE=t
 
 Open EMR Studio `Studio_1`, create a Workspace, attach `vpts-iceberg-r-tutorial`, upload and run [`examples/vpts_iceberg_tutorial.ipynb`](examples/vpts_iceberg_tutorial.ipynb). It contains the same timed analyses as the R examples, including the full-archive scan. All 11 code cells were tested successfully through PySpark/Livy.
 
+## Inspect the 2025 extrapolation sample in R
+
+Connect to the existing cluster with the read-only collaborator profile; do not
+launch a second cluster:
+
+```bash
+./scripts/setup-local.sh
+./scripts/tunnel-livy.sh
+```
+
+Leave the tunnel running. In another terminal, inspect the production sample:
+
+```bash
+Rscript extrapolation/scripts/inspect-production-year.R 2025
+```
+
+The script reads the sample directly from
+`s3://vpts-extrapolation-863683271215/production/profile_sampled/year=2025/`.
+It prints dataset counts, missingness at each of the 50 100-m heights, and one
+complete 50-row profile. The shared R helper and EMR defaults configure a larger
+Iceberg S3 connection pool and acquisition timeout for stable archive queries.
+
 ## Configuration
 
 EMR 7.12 supplies compatible Hadoop, AWS SDK, S3, and Iceberg libraries. The config adds Spark 3.5/Scala 2.12 builds of Sedona, GeoTools, and MongoDB. This replaces the local mixed Spark 3.2/3.4/3.5 and Scala 2.12/2.13 jar set.

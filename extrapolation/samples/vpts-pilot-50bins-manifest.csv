@@ -1,0 +1,2 @@
+"output_path","data_snapshot_id","vpi_snapshot_id","vid_min","dh_m","n_layers","k_max","s_max","profiles","rows","elapsed_seconds"
+"/Users/at744/clo/bigbird/vpts-iceberg-tutorial/extrapolation/samples/vpts-pilot-50bins.parquet","3748014820880754227","4310587873691587945",6.6,100,50,10,3,17150,857500,742.933702945709

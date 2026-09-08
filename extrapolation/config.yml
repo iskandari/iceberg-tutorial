@@ -1,0 +1,66 @@
+version: 1
+
+# Fixed model geometry.
+dh_m: 100
+height_grid_tolerance_m: 0.001
+n_layers: 50
+k_max: 10
+s_max: 3
+
+# Sampling. Change these only by creating a versioned config for a new dataset.
+seed: 20260903
+validation_fraction: 0.10
+night_buffer_hours: 0
+# This is an initial design budget, not a commitment. Use the pilot size report
+# to adjust it before the full archive run.
+target_profiles:
+  train: 1500000
+  valid: 200000
+  test: 200000
+  unseen_station: 100000
+test_year: 2025
+include_target_agl: true
+
+# Training-only density gates (birds / km^2). The Spark value must be no larger
+# than every full-profile VPI threshold under consideration. vid_min applies to
+# the retained 0--5000 m predictor block after holding out k bottom layers.
+vid_min: 6.6
+vid_min_permissive: 6.6
+
+# Required provenance. Deliberately unset so an archive build cannot silently
+# read a moving Iceberg table. Quote the value: Iceberg snapshot IDs exceed R's
+# exact double-integer range.
+snapshot_id: "3748014820880754227"
+vpi_snapshot_id: "4310587873691587945"
+
+tables:
+  source: glue_catalog.vpts.data
+  profile_index: glue_catalog.vpts.vpi
+  dim_station: glue_catalog.vpts_extrapolation.dim_station
+  dim_solar: glue_catalog.vpts_extrapolation.dim_solar
+  profile_stats: glue_catalog.vpts_extrapolation.profile_stats
+  profile_qc: glue_catalog.vpts_extrapolation.profile_qc
+  profile_thinned: glue_catalog.vpts_extrapolation.profile_thinned
+  profile_split: glue_catalog.vpts_extrapolation.profile_split
+  profile_selected: glue_catalog.vpts_extrapolation.profile_selected
+  profile_sampled: glue_catalog.vpts_extrapolation.profile_sampled
+
+# Actual VPTS names in glue_catalog.vpts.data.
+columns:
+  station_id: radar
+  timestamp: datetime
+  height_m: height
+  density: dens
+  profile_vid: vid
+
+# These predicates are intentionally explicit and must be approved against the
+# pinned source schema before a production build. They are evaluated per layer;
+# every layer in a retained profile must pass all predicates.
+quality_predicates: []
+
+# Conventions selected from the design document.
+conventions:
+  layer_height: bottom
+  doy_source: night_key
+  polar_solar: drop
+  truncate_top_at_inference: true

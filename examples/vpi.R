@@ -4,16 +4,7 @@ options(rstudio.connectionObserver.errorsSuppressed = TRUE)
 source("examples/helpers.R")
 
 # First run scripts/tunnel-livy.sh in a terminal and leave it open.
-config <- spark_config()
-config[["sparklyr.livy.jar"]] <- "https://raw.githubusercontent.com/sparklyr/sparklyr/main/inst/java/sparklyr-3.5-2.12.jar"
-config[["spark.dynamicAllocation.initialExecutors"]] <- 1
-config[["spark.dynamicAllocation.maxExecutors"]] <- 4
-sc <- spark_connect(
-  master = "http://localhost:8998",
-  method = "livy",
-  version = "3.5",
-  config = config
-)
+sc <- connect_vpts(initial_executors = 1L, max_executors = 4L)
 
 # Discover every Iceberg table in the VPTS database.
 timed_query(sc, "List VPTS tables", "SHOW TABLES IN glue_catalog.vpts")
